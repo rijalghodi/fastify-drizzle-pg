@@ -1,38 +1,31 @@
 import { randomBytes } from "node:crypto";
 import bcrypt from "bcryptjs";
 import type { FastifyBaseLogger } from "fastify";
-import type { env } from "../../config/env.js";
-import type { User } from "../../infra/db/schema/users.js";
-import { AppError } from "../../lib/errors.js";
-import type { JwtSign } from "../../types/jwt.js";
-import type { PasswordResetRepository } from "./password-reset.repository.js";
-import type { UserRepository } from "./user.repository.js";
+import type { env } from "@/config/env";
+import type { User } from "@/db/models";
+import { AppError } from "@/lib/errors";
+import type { JwtSign } from "@/types/jwt";
+import { UserRepo, TokenRepo } from "@/repos";
 
 export class AuthService {
-  private userRepository: UserRepository;
-  private passwordResetRepository: PasswordResetRepository;
-  private jwtSign: JwtSign;
-  private logger: FastifyBaseLogger;
-  private appEnv: typeof env;
+  private readonly userRepo: UserRepo;
+  private readonly tokenRepo: TokenRepo;
+  private readonly jwtSign: JwtSign;
+  private readonly logger: FastifyBaseLogger;
+  private readonly appEnv: typeof env;
 
-  constructor({
-    userRepository,
-    passwordResetRepository,
-    jwtSign,
-    logger,
-    appEnv,
-  }: {
-    userRepository: UserRepository;
-    passwordResetRepository: PasswordResetRepository;
+  constructor(opts: {
+    userRepo: UserRepo;
+    tokenRepo: TokenRepo;
     jwtSign: JwtSign;
     logger: FastifyBaseLogger;
     appEnv: typeof env;
   }) {
-    this.userRepository = userRepository;
-    this.passwordResetRepository = passwordResetRepository;
-    this.jwtSign = jwtSign;
-    this.logger = logger;
-    this.appEnv = appEnv;
+    this.userRepo = opts.userRepo;
+    this.tokenRepo = opts.tokenRepo;
+    this.jwtSign = opts.jwtSign;
+    this.logger = opts.logger;
+    this.appEnv = opts.appEnv;
   }
 
   async register(input: {
@@ -40,14 +33,14 @@ export class AuthService {
     password: string;
     name?: string;
   }): Promise<{ accessToken: string; user: Omit<User, "passwordHash"> }> {
-    const existing = await this.userRepository.findByEmail(input.email);
+    const existing = await this.userRepo.findByEmail(input.email);
     if (existing) {
       throw new AppError(409, "Email already registered", [
         { message: "Email is already in use", field: "email" },
       ]);
     }
     const passwordHash = await bcrypt.hash(input.password, 10);
-    const user = await this.userRepository.create({
+    const user = await this.userRepo.create({
       email: input.email,
       passwordHash,
       name: input.name ?? null,
@@ -62,7 +55,7 @@ export class AuthService {
     email: string;
     password: string;
   }): Promise<{ accessToken: string; user: Omit<User, "passwordHash"> }> {
-    const user = await this.userRepository.findByEmail(input.email);
+    const user = await this.userRepo.findByEmail(input.email);
     if (!user) {
       throw new AppError(401, "Invalid credentials", [
         { message: "Invalid email or password", field: "credentials" },
@@ -81,17 +74,18 @@ export class AuthService {
   }
 
   async forgotPassword(email: string): Promise<void> {
-    const user = await this.userRepository.findByEmail(email);
+    const user = await this.userRepo.findByEmail(email);
     if (!user) {
       return;
     }
-    await this.passwordResetRepository.deleteByUserId(user.id);
+    await this.tokenRepo.deleteByUserId(user.id);
     const token = randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now() + this.appEnv.resetTokenTtlMs);
-    await this.passwordResetRepository.create({
+    await this.tokenRepo.create({
       userId: user.id,
       token,
       expiresAt,
+      intent: "reset_password",
     });
     this.logger.info(
       { email, resetToken: token },

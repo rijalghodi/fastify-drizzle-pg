@@ -8,10 +8,10 @@ import {
   ForgotBodySchema,
   LoginBodySchema,
   RegisterBodySchema,
-} from "@/modules/auth/auth.schemas";
+} from "@/schema";
 
-export const authPlugin: FastifyPluginAsync = async (fastify) => {
-  const { authController } = fastify.diContainer.cradle;
+export const authRoutes: FastifyPluginAsync = async (fastify) => {
+  const { authController } = fastify;
 
   fastify.post(
     "/register",

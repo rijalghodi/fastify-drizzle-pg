@@ -1,6 +1,6 @@
-import { buildApp } from "./app.js";
-import { env } from "./config/env.js";
-import { closeDb } from "./infra/db/client.js";
+import { buildApp } from "@/app";
+import { env } from "@/config/env";
+import { closeDb } from "@/db/client";
 
 async function main() {
   const app = await buildApp();

@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@fastify/awilix':
-        specifier: ^8.2.0
-        version: 8.2.0(awilix@13.0.3)(fastify@5.8.5)
       '@fastify/cors':
         specifier: ^11.2.0
         version: 11.2.0
@@ -29,9 +26,6 @@ importers:
       '@sinclair/typebox':
         specifier: ^0.34.49
         version: 0.34.49
-      awilix:
-        specifier: ^13.0.3
-        version: 13.0.3
       bcryptjs:
         specifier: ^3.0.3
         version: 3.0.3
@@ -599,12 +593,6 @@ packages:
   '@fastify/ajv-compiler@4.0.5':
     resolution: {integrity: sha512-KoWKW+MhvfTRWL4qrhUwAAZoaChluo0m0vbiJlGMt2GXvL4LVPQEjt8kSpHI3IBq5Rez8fg+XeH3cneztq+C7A==}
 
-  '@fastify/awilix@8.2.0':
-    resolution: {integrity: sha512-U5yygVXY8WJajDXE3w3FdU839NXaYJusxjTrcJGB82oUOeYvDpawB749aSCEJ+XFGE8QpB42Qtr4FI4z0wfXBw==}
-    peerDependencies:
-      awilix: '>=9.0.0'
-      fastify: ^5.0.0
-
   '@fastify/cors@11.2.0':
     resolution: {integrity: sha512-LbLHBuSAdGdSFZYTLVA3+Ch2t+sA6nq3Ejc6XLAKiQ6ViS2qFnvicpj0htsx03FyYeLs04HfRNBsz/a8SvbcUw==}
 
@@ -702,16 +690,6 @@ packages:
 
   avvio@9.2.0:
     resolution: {integrity: sha512-2t/sy01ArdHHE0vRH5Hsay+RtCZt3dLPji7W7/MMOCEgze5b7SNDC4j5H6FnVgPkI1MTNFGzHdHrVXDDl7QSSQ==}
-
-  awilix-manager@6.4.0:
-    resolution: {integrity: sha512-8YBhrtxlhMyFwvZRT+BeLlrBNF6KSzdUTeXZBdX5B7IcjqB6xDQ8cdkfSixJEsjMBS4P3NvbodUTDAikG7rQqQ==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      awilix: '>=9.0.0'
-
-  awilix@13.0.3:
-    resolution: {integrity: sha512-WpgYKwf8XEPAxabPxBYGvxz1QZhyxoopQLLqpwwVqSQAvTO46yhld3M9nfMuV8t2FjsTO7DQblALD9w+C8iVKQ==}
-    engines: {node: '>=20.0.0'}
 
   balanced-match@4.0.4:
     resolution: {integrity: sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==}
@@ -1609,13 +1587,6 @@ snapshots:
       ajv-formats: 3.0.1(ajv@8.20.0)
       fast-uri: 3.1.2
 
-  '@fastify/awilix@8.2.0(awilix@13.0.3)(fastify@5.8.5)':
-    dependencies:
-      awilix: 13.0.3
-      awilix-manager: 6.4.0(awilix@13.0.3)
-      fastify: 5.8.5
-      fastify-plugin: 5.1.0
-
   '@fastify/cors@11.2.0':
     dependencies:
       fastify-plugin: 5.1.0
@@ -1746,14 +1717,6 @@ snapshots:
     dependencies:
       '@fastify/error': 4.2.0
       fastq: 1.20.1
-
-  awilix-manager@6.4.0(awilix@13.0.3):
-    dependencies:
-      awilix: 13.0.3
-
-  awilix@13.0.3:
-    dependencies:
-      fast-glob: 3.3.3
 
   balanced-match@4.0.4: {}
 

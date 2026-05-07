@@ -11,7 +11,7 @@ const HealthResponseSchema = Type.Object({
   data: HealthDataSchema,
 });
 
-export const healthPlugin: FastifyPluginAsync = async (fastify) => {
+export const healthRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.get(
     "/health",
     {

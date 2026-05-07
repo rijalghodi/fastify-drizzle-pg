@@ -1,13 +1,9 @@
 import { eq } from "drizzle-orm";
-import type { Db } from "../../infra/db/client.js";
-import { type NewUser, type User, users } from "../../infra/db/schema/users.js";
+import type { Db } from "@/db/client";
+import { type NewUser, type User, users } from "@/db/models";
 
-export class UserRepository {
-  private db: Db;
-
-  constructor({ db }: { db: Db }) {
-    this.db = db;
-  }
+export class UserRepo {
+  constructor(private readonly db: Db) {}
 
   async findByEmail(email: string): Promise<User | undefined> {
     const rows = await this.db

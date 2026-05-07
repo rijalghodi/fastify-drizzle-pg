@@ -1,24 +1,20 @@
 import type { Static } from "@sinclair/typebox";
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { AppError } from "../../lib/errors.js";
-import { sendSuccess } from "../../lib/response.js";
+import { AppError } from "@/lib/errors";
+import { sendSuccess } from "@/lib/response";
 import type {
   ForgotBodySchema,
   LoginBodySchema,
   RegisterBodySchema,
-} from "./auth.schemas.js";
-import type { AuthService } from "./auth.service.ts";
+} from "@/schema";
+import { AuthService } from "@/services";
 
 type RegisterBody = Static<typeof RegisterBodySchema>;
 type LoginBody = Static<typeof LoginBodySchema>;
 type ForgotBody = Static<typeof ForgotBodySchema>;
 
 export class AuthController {
-  private authService: AuthService;
-
-  constructor({ authService }: { authService: AuthService }) {
-    this.authService = authService;
-  }
+  constructor(private readonly authService: AuthService) {}
 
   async register(request: FastifyRequest, reply: FastifyReply) {
     const body = request.body as RegisterBody;

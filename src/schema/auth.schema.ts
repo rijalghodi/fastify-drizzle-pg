@@ -46,16 +46,4 @@ export const ApiSuccessForgotSchema = Type.Object({
   data: Type.Null(),
 });
 
-export const ApiErrorSchema = Type.Object({
-  ok: Type.Literal(false),
-  message: Type.String(),
-  data: Type.Null(),
-  details: Type.Array(
-    Type.Object({
-      message: Type.String(),
-      field: Type.String(),
-    }),
-  ),
-});
-
 export const authTag = "Auth";

@@ -1,6 +1,6 @@
 import type { FastifyError, FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
-import { AppError } from "../lib/errors.js";
+import { AppError } from "@/lib/errors";
 
 function isValidationError(err: unknown): err is FastifyError & {
   validation: {

@@ -1,4 +1,4 @@
-import type { PaginatedData } from "./response.js";
+import type { PaginatedData } from "@/lib/response";
 
 export function buildPaginated<T>(input: {
   page: number;

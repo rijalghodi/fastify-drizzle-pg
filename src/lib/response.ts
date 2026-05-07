@@ -1,5 +1,5 @@
 import type { FastifyReply } from "fastify";
-import type { ErrorDetail } from "./errors.js";
+import type { ErrorDetail } from "@/lib/errors";
 
 export type ApiSuccess<T> = {
   ok: true;

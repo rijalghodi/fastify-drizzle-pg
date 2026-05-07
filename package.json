@@ -24,14 +24,12 @@
     "node": ">=22"
   },
   "dependencies": {
-    "@fastify/awilix": "^8.2.0",
     "@fastify/cors": "^11.2.0",
     "@fastify/jwt": "^10.0.0",
     "@fastify/swagger": "^9.7.0",
     "@fastify/swagger-ui": "^5.2.6",
     "@fastify/type-provider-typebox": "^6.1.0",
     "@sinclair/typebox": "^0.34.49",
-    "awilix": "^13.0.3",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",

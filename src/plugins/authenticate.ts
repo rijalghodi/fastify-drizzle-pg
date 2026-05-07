@@ -31,8 +31,7 @@ export const authenticatePlugin = fp(async (fastify: FastifyInstance) => {
           ],
         });
       }
-      const user =
-        await fastify.diContainer.cradle.userRepository.findById(subRaw);
+      const user = await fastify.userRepository.findById(subRaw);
       if (!user) {
         return reply.status(401).send({
           ok: false,
