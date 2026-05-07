@@ -62,22 +62,4 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
     },
     (req, reply) => authController.forgotPassword(req, reply),
   );
-
-  fastify.get(
-    "/me",
-    {
-      preHandler: [fastify.authenticate],
-      schema: {
-        tags: [authTag],
-        summary: "Current user",
-        security: [{ bearerAuth: [] }],
-        response: {
-          200: ApiSuccessUserSchema,
-          401: ApiErrorSchema,
-          500: ApiErrorSchema,
-        },
-      },
-    },
-    (req, reply) => authController.me(req, reply),
-  );
 };

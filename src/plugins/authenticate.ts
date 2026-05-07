@@ -18,7 +18,7 @@ export const authenticatePlugin = fp(async (fastify: FastifyInstance) => {
         });
       }
 
-      const user = await fastify.userRepository.findById(userId);
+      const user = await fastify.userRepo.findById(userId);
       if (!user) {
         return reply.status(401).send({
           ok: false,

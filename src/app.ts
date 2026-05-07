@@ -8,6 +8,7 @@ import { errorHandlerPlugin } from "@/plugins/error-handler";
 import { swaggerPlugin } from "@/plugins/swagger";
 import { authRoutes } from "@/routes/auth.routes";
 import { healthRoutes } from "@/routes/health.routes";
+import { userRoutes } from "./routes/user.routes";
 
 export async function buildApp() {
   const app = Fastify({
@@ -27,9 +28,10 @@ export async function buildApp() {
   await app.register(errorHandlerPlugin);
   await app.register(swaggerPlugin);
   await app.register(diPlugin);
-  await app.register(authenticatePlugin);
   await app.register(healthRoutes);
+  await app.register(authenticatePlugin);
   await app.register(authRoutes, { prefix: "/auth" });
+  await app.register(userRoutes, { prefix: "/users" });
 
   return app;
 }
