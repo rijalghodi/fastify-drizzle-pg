@@ -17,8 +17,8 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "noUncheckedIndexedAccess": true
-    // "ignoreDeprecations": "6.0",
+    "noUncheckedIndexedAccess": true,
+    "ignoreDeprecations": "6.0"
   },
   "include": ["src/**/*.ts"],
   "tsc-alias": {

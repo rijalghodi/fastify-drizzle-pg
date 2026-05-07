@@ -1,31 +1,25 @@
 import { randomBytes } from "node:crypto";
 import bcrypt from "bcryptjs";
 import type { FastifyBaseLogger } from "fastify";
-import type { env } from "@/config/env";
+import { env } from "@/config/env";
 import type { User } from "@/db/models";
 import { AppError } from "@/lib/errors";
-import type { JwtSign } from "@/types/jwt";
-import { UserRepo, TokenRepo } from "@/repos";
+import { signAccessToken } from "@/lib/sign-access-token";
+import type { TokenRepo, UserRepo } from "@/repos";
 
 export class AuthService {
   private readonly userRepo: UserRepo;
   private readonly tokenRepo: TokenRepo;
-  private readonly jwtSign: JwtSign;
   private readonly logger: FastifyBaseLogger;
-  private readonly appEnv: typeof env;
 
   constructor(opts: {
     userRepo: UserRepo;
     tokenRepo: TokenRepo;
-    jwtSign: JwtSign;
     logger: FastifyBaseLogger;
-    appEnv: typeof env;
   }) {
     this.userRepo = opts.userRepo;
     this.tokenRepo = opts.tokenRepo;
-    this.jwtSign = opts.jwtSign;
     this.logger = opts.logger;
-    this.appEnv = opts.appEnv;
   }
 
   async register(input: {
@@ -46,7 +40,7 @@ export class AuthService {
       name: input.name ?? null,
     });
     return {
-      accessToken: this.jwtSign({ sub: user.id }),
+      accessToken: await signAccessToken(user.id),
       user: this.sanitize(user),
     };
   }
@@ -68,7 +62,7 @@ export class AuthService {
       ]);
     }
     return {
-      accessToken: this.jwtSign({ sub: user.id }),
+      accessToken: await signAccessToken(user.id),
       user: this.sanitize(user),
     };
   }
@@ -80,17 +74,15 @@ export class AuthService {
     }
     await this.tokenRepo.deleteByUserId(user.id);
     const token = randomBytes(32).toString("hex");
-    const expiresAt = new Date(Date.now() + this.appEnv.resetTokenTtlMs);
+    const tokenHash = await bcrypt.hash(token, 10);
+    const expiresAt = new Date(Date.now() + env.resetTokenTtlMs);
     await this.tokenRepo.create({
       userId: user.id,
-      token,
+      tokenHash,
       expiresAt,
       intent: "reset_password",
     });
-    this.logger.info(
-      { email, resetToken: token },
-      "Password reset token issued (deliver via email in production)",
-    );
+    this.logger.info(`Password reset token issued for email ${email}`);
   }
 
   private sanitize(user: User): Omit<User, "passwordHash"> {

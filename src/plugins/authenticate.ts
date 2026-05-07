@@ -1,45 +1,29 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
+import { verifyAccessToken } from "@/lib/sign-access-token";
 
 export const authenticatePlugin = fp(async (fastify: FastifyInstance) => {
   fastify.decorate(
     "authenticate",
     async (request: FastifyRequest, reply: FastifyReply) => {
+      let userId: string | undefined;
       try {
-        await request.jwtVerify();
+        const token = request.headers.authorization?.split(" ")[1] ?? "";
+        userId = await verifyAccessToken(token);
       } catch {
         return reply.status(401).send({
           ok: false,
-          message: "Unauthorized",
+          message: "Unauthorized. Invalid or expired token",
           data: null,
-          details: [
-            {
-              message: "Invalid or expired token",
-              field: "authorization",
-            },
-          ],
         });
       }
-      const subRaw = request.user?.sub;
-      if (!subRaw) {
-        return reply.status(401).send({
-          ok: false,
-          message: "Unauthorized",
-          data: null,
-          details: [
-            { message: "Invalid token payload", field: "authorization" },
-          ],
-        });
-      }
-      const user = await fastify.userRepository.findById(subRaw);
+
+      const user = await fastify.userRepository.findById(userId);
       if (!user) {
         return reply.status(401).send({
           ok: false,
-          message: "Unauthorized",
+          message: "Unauthorized. User no longer exists",
           data: null,
-          details: [
-            { message: "User no longer exists", field: "authorization" },
-          ],
         });
       }
       request.currentUser = {

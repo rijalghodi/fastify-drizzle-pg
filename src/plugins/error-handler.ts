@@ -25,10 +25,7 @@ export const errorHandlerPlugin = fp(async (fastify: FastifyInstance) => {
         ok: false,
         message: err.message,
         data: null,
-        details:
-          err.details.length > 0
-            ? err.details
-            : [{ message: err.message, field: "general" }],
+        details: err.details,
       });
     }
     if (isValidationError(err)) {
@@ -58,15 +55,6 @@ export const errorHandlerPlugin = fp(async (fastify: FastifyInstance) => {
           ? "Internal server error"
           : (fastifyErr.message ?? "Error"),
       data: null,
-      details: [
-        {
-          message:
-            statusCode >= 500
-              ? "Internal server error"
-              : (fastifyErr.message ?? ""),
-          field: "general",
-        },
-      ],
     });
   });
 });

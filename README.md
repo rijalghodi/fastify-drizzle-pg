@@ -5,7 +5,7 @@
 - Small TypeScript API starter: Fastify, Drizzle, and PostgreSQL.
 - Code is split so HTTP stays thin: routes → controllers → services → repos.
 - Dependencies are attached to Fastify in `src/plugins/di.ts` with `fastify.decorate`.
-- Auth is JWT (`@fastify/jwt`). Schemas use TypeBox. Logs use Pino (pretty in dev).
+- Auth is JWT (`jose`). Schemas use TypeBox. Logs use Pino (pretty in dev).
 - OpenAPI UI: `/docs` when `NODE_ENV` is not `production`.
 
 ## Features

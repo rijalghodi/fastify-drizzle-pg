@@ -7,7 +7,7 @@ import type {
   LoginBodySchema,
   RegisterBodySchema,
 } from "@/schema";
-import { AuthService } from "@/services";
+import type { AuthService } from "@/services";
 
 type RegisterBody = Static<typeof RegisterBodySchema>;
 type LoginBody = Static<typeof LoginBodySchema>;

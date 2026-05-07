@@ -11,7 +11,7 @@ export const tokens = pgTable("tokens", {
   userId: uuid("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  token: text("token").notNull(),
+  tokenHash: text("token_hash").notNull(),
   intent: tokenIntents("intent").notNull(),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })

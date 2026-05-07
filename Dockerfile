@@ -18,5 +18,5 @@ COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile --prod
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/drizzle ./drizzle
-EXPOSE 3000
+EXPOSE 8000
 CMD ["node", "dist/server.js"]
