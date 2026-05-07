@@ -1,6 +1,6 @@
+import type { FastifyPluginAsync } from "fastify";
 import { ApiSuccessUserSchema } from "@/schema/auth.schema";
 import { ApiErrorSchema } from "@/schema/common.schema";
-import type { FastifyPluginAsync } from "fastify";
 
 export const userRoutes: FastifyPluginAsync = async (fastify) => {
   const userController = fastify.userController;

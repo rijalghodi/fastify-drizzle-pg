@@ -1,11 +1,11 @@
 import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
 import { AuthController } from "@/controllers/auth.controller";
+import { UserController } from "@/controllers/user.controller";
 import { db } from "@/db/client";
 import { TokenRepo } from "@/repos/token.repo";
 import { UserRepo } from "@/repos/user.repo";
 import { AuthService } from "@/services/auth.service";
-import { UserController } from "@/controllers/user.controller";
 
 export const diPlugin = fp(async (fastify: FastifyInstance) => {
   const userRepo = new UserRepo(db);

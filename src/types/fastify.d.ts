@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { AuthController, UserController } from "@/controllers";
 import type { User } from "@/db/models";
-import type { UserRepo, TokenRepo } from "@/repos";
+import type { TokenRepo, UserRepo } from "@/repos";
 import type { AuthService } from "@/services";
 
 declare module "fastify" {
