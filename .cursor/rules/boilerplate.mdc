@@ -1,0 +1,49 @@
+---
+description: Fastify Drizzle PostgreSQL boilerplate — architecture and conventions
+globs:
+  - "src/**/*.ts"
+alwaysApply: true
+---
+
+# Backend conventions
+
+## Request flow
+
+Use **routes (Fastify plugins under `src/modules` or `src/routes`) → controller → service → repository**. Keep route files thin: schema + wiring only. Business logic lives in services; SQL/Drizzle in repositories.
+
+## Dependency injection
+
+Register constructors on `fastify.diContainer` in `src/plugins/di.ts`. Prefer `singleton()` for app-wide deps. Resolve via `fastify.diContainer.cradle.*` in route handlers.
+
+## HTTP responses
+
+Always use the shared envelope:
+
+- Success: `{ ok: true, message: string, data: T }` (see `sendSuccess` in `src/lib/response.ts`)
+- Paginated: `{ ok: true, message, data: { page, pageSize, total, from, to, items } }` via `sendPaginated` / `buildPaginated`
+- Error: `{ ok: false, message, data: null, details: { message, field }[] }`
+
+Throw `AppError` from `src/lib/errors.ts` for expected failures; validation errors are mapped in `src/plugins/error-handler.ts`.
+
+## Auth
+
+Protected routes use `preHandler: [fastify.authenticate]` from `src/plugins/authenticate.ts`. JWT is configured in `src/plugins/di.ts` together with Awilix.
+
+## Persistence
+
+Schema: `src/infra/db/schema/`. Client: `src/infra/db/client.ts`. Migrations: `drizzle/`; scripts: `pnpm db:generate`, `pnpm db:migrate` (requires `DATABASE_URL`).
+
+## Path aliases
+
+`tsconfig.json` maps `@/*` → `./src/*`. With `moduleResolution: NodeNext`, imports must use the **`.js` extension** in the path (e.g. `@/config/env.js`), matching ESM emit. `pnpm build` runs **`tsc-alias`** so `dist/` gets relative paths runnable by Node.
+
+## Types & validation
+
+Route bodies use **TypeBox** (`@sinclair/typebox`) in `*.schemas.ts`; the app is built with `@fastify/type-provider-typebox`. OpenAPI/Swagger is registered in `src/plugins/swagger.ts` (UI at `/docs` when `NODE_ENV` is not `production`).
+
+## Tooling
+
+- Lint/format: **Biome** (`pnpm lint` / `pnpm lint:fix`)
+- Pre-commit (husky): `pnpm lint` and `pnpm typecheck`
+
+When adding features, mirror the `auth` module layout: `*.schemas.ts`, `*.repository.ts`, `*.service.ts`, `*.controller.ts`, `*.plugin.ts`.
