@@ -9,40 +9,44 @@ alwaysApply: true
 
 ## Layout
 
-Flat layers under `src/`:
+Layers under `src/`:
 
-- `routes/` — Fastify route plugins + route-only TypeBox schemas (`*.schemas.ts` next to `*.routes.ts` where it fits)
-- `controllers/` — translate HTTP ↔ service calls
-- `services/` — business logic
-- `repos/` — Drizzle access
-- `plugins/`, `config/`, `lib/`, `infra/`, `types/` — shared infrastructure
+- `routes/` — Fastify route plugins (e.g. `auth.routes.ts`, `user.routes.ts`, `health.routes.ts`)
+- `controllers/` — HTTP ↔ service; barrel `controllers/index.ts`
+- `services/` — business logic; barrel `services/index.ts`
+- `repos/` — Drizzle access (`*.repo.ts`, e.g. `user.repo.ts`, `token.repo`); barrel `repos/index.ts`
+- `schema/` — TypeBox + OpenAPI shapes shared by routes (`auth.schema.ts`, `common.schema.ts`, `index.ts`)
+- `db/` — `client.ts` + `models/` (Drizzle table definitions); barrel `db/models/index.ts`
+- `plugins/`, `config/`, `lib/`, `types/` — cross-cutting pieces
 
 Flow: **routes → controllers → services → repos**.
 
 ## Imports
 
-Use the **`@/`** alias (see `tsconfig.json` `paths`). **Do not** add `.js` or `.ts` in source imports.
+Use the **`@/`** alias (`tsconfig.json` `paths`). **Do not** add `.js` or `.ts` in source imports.
 
-Exception: under `src/infra/db/schema/`, same-folder **relative** barrels (`export * from "./users"`) avoid broken `tsc-alias` output for re-exports.
+**Exception:** in **`src/db/models/`**, use same-folder **relative** re-exports in `index.ts` (e.g. `export * from "./users"`) so `tsc-alias` does not emit broken paths for barrels.
 
-`pnpm build` runs **`tsc` + `tsc-alias`** with `resolveFullPaths` so `dist/` uses Node-ESM-safe relative paths ending in `.js`.
+`pnpm build` runs **`tsc` + `tsc-alias`** with `resolveFullPaths` / `resolveFullExtension` so **`dist/`** uses Node-ESM-safe relative imports ending in `.js`.
 
 ## Dependency wiring
 
-Use **`fastify.decorate`** in `src/plugins/di.ts` (with JWT registered first). Augment `FastifyInstance` in `src/types/fastify.d.ts` for typed `userRepository`, `authService`, `authController`, etc.
+- In **`src/plugins/di.ts`**: register **`@fastify/jwt`** and repos, services, and controllers
+- **`fastify.decorate`** what routes need (e.g. `userRepo`, `authController`, `userController`). Typically only controllers.
 
 ## HTTP responses
 
-Use `sendSuccess` / `sendPaginated` from `src/lib/response.ts` and throw `AppError` from `src/lib/errors.ts`; global handler in `src/plugins/error-handler.ts`.
+Use **`sendSuccess`** / **`sendPaginated`** from `src/lib/response.ts`; throw **`AppError`** from `src/lib/errors.ts`; global handling in `src/plugins/error-handler.ts`.
 
 ## Auth
 
-Protected routes: `preHandler: [fastify.authenticate]` (`src/plugins/authenticate.ts`).
+- Issue tokens via **`jwtSign`** + **`@fastify/jwt`** config from `di.ts`.
+- Protected routes: **`preHandler: [fastify.authenticate]`** in `src/plugins/authenticate.ts` (**`request.jwtVerify()`**, then load `request.currentUser` via **`fastify.userRepo`**).
 
 ## Persistence
 
-Schema: `src/infra/db/schema/`. Migrations: `pnpm db:generate`, `pnpm db:migrate`.
+Drizzle schema entry: **`src/db/models/index.ts`**. Migrations: **`pnpm db:generate`**, **`pnpm db:migrate`** (requires **`DATABASE_URL`**).
 
 ## Tooling
 
-Biome: `pnpm lint` / `pnpm lint:fix`. Husky pre-commit: lint + typecheck.
+Biome: **`pnpm lint`** / **`pnpm lint:fix`**. Husky pre-commit: lint + typecheck.
