@@ -8,7 +8,21 @@ export const swaggerPlugin = fp(async (fastify: FastifyInstance) => {
   await fastify.register(fastifySwagger, {
     openapi: {
       openapi: "3.1.0",
-      info: { title: "fastify-drizzle-pg", version: "0.1.0" },
+      info: {
+        title: "Fastify Drizzle PostgreSQL boilerplate",
+        version: "0.1.0",
+        description:
+          "API documentation for the Fastify Drizzle PostgreSQL boilerplate",
+        contact: {
+          name: "Rijal Ghodi",
+          email: "rijalghodi.dev@gmail.com",
+          url: "https://rijalghodi.xyz",
+        },
+        license: {
+          name: "MIT",
+          url: "https://opensource.org/licenses/MIT",
+        },
+      },
       components: {
         securitySchemes: {
           bearerAuth: {

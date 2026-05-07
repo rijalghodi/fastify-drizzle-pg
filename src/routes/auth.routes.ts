@@ -3,7 +3,6 @@ import {
   ApiErrorSchema,
   ApiSuccessAuthSchema,
   ApiSuccessForgotSchema,
-  ApiSuccessUserSchema,
   authTag,
   ForgotBodySchema,
   LoginBodySchema,

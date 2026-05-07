@@ -1,19 +1,24 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
-import { verifyAccessToken } from "@/lib/sign-access-token";
 
 export const authenticatePlugin = fp(async (fastify: FastifyInstance) => {
   fastify.decorate(
     "authenticate",
     async (request: FastifyRequest, reply: FastifyReply) => {
-      let userId: string | undefined;
       try {
-        const token = request.headers.authorization?.split(" ")[1] ?? "";
-        userId = await verifyAccessToken(token);
+        await request.jwtVerify();
       } catch {
         return reply.status(401).send({
           ok: false,
           message: "Unauthorized. Invalid or expired token",
+          data: null,
+        });
+      }
+      const userId = request.user?.sub;
+      if (!userId) {
+        return reply.status(401).send({
+          ok: false,
+          message: "Unauthorized. Invalid token payload",
           data: null,
         });
       }

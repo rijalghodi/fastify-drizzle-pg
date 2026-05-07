@@ -1,8 +1,7 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { AuthController, UserController } from "@/controllers";
 import type { User } from "@/db/models";
-import type { TokenRepo, UserRepo } from "@/repos";
-import type { AuthService } from "@/services";
+import type { UserRepo } from "@/repos";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -11,13 +10,17 @@ declare module "fastify" {
       reply: FastifyReply,
     ) => Promise<void>;
     userRepo: UserRepo;
-    tokenRepo: TokenRepo;
-    authService: AuthService;
     authController: AuthController;
     userController: UserController;
   }
 
   interface FastifyRequest {
     currentUser?: Omit<User, "passwordHash">;
+  }
+}
+
+declare module "@fastify/jwt" {
+  interface FastifyJWT {
+    user: { sub: string };
   }
 }

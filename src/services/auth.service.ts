@@ -4,22 +4,24 @@ import type { FastifyBaseLogger } from "fastify";
 import { env } from "@/config/env";
 import type { User } from "@/db/models";
 import { AppError } from "@/lib/errors";
-import { signAccessToken } from "@/lib/sign-access-token";
 import type { TokenRepo, UserRepo } from "@/repos";
 
 export class AuthService {
   private readonly userRepo: UserRepo;
   private readonly tokenRepo: TokenRepo;
   private readonly logger: FastifyBaseLogger;
+  private readonly jwtSign: (sub: string) => string;
 
   constructor(opts: {
     userRepo: UserRepo;
     tokenRepo: TokenRepo;
     logger: FastifyBaseLogger;
+    jwtSign: (sub: string) => string;
   }) {
     this.userRepo = opts.userRepo;
     this.tokenRepo = opts.tokenRepo;
     this.logger = opts.logger;
+    this.jwtSign = opts.jwtSign;
   }
 
   async register(input: {
@@ -40,7 +42,7 @@ export class AuthService {
       name: input.name ?? null,
     });
     return {
-      accessToken: await signAccessToken(user.id),
+      accessToken: this.jwtSign(user.id),
       user: this.sanitize(user),
     };
   }
@@ -62,7 +64,7 @@ export class AuthService {
       ]);
     }
     return {
-      accessToken: await signAccessToken(user.id),
+      accessToken: this.jwtSign(user.id),
       user: this.sanitize(user),
     };
   }

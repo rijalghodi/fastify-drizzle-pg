@@ -3,8 +3,6 @@ import { AppError } from "@/lib/errors";
 import { sendSuccess } from "@/lib/response";
 
 export class UserController {
-  constructor() {}
-
   async me(request: FastifyRequest, reply: FastifyReply) {
     if (!request.currentUser) {
       throw new AppError(500, "Auth state invalid", [
