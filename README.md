@@ -6,7 +6,7 @@
 - Code is split so HTTP stays thin: routes → controllers → services → repos.
 - Dependencies are attached to Fastify in `src/plugins/di.ts` with `fastify.decorate`.
 - Auth is JWT (`@fastify/jwt` for sign + verify). Schemas use TypeBox. Logs use Pino (pretty in dev).
-- OpenAPI UI: `/docs` when `NODE_ENV` is not `production`.
+- Swagger documentation UI: `/docs`.
 
 ## Features
 
@@ -28,6 +28,7 @@
 
 ## Endpoints
 
+- `GET /docs` — Swagger documentation
 - `GET /health` — health check.
 - `POST /auth/register` — body: email, password, optional name → user + token.
 - `POST /auth/login` — body: email, password → token.
@@ -37,12 +38,11 @@
 ## Run locally
 
 - Node 22+ and pnpm.
-- Copy `.env.example` to `.env`. Set `DATABASE_URL` and `JWT_SECRET` (long random value in production).
-- Start PostgreSQL, then run `pnpm db:migrate` once.
-- Run `pnpm dev`. Default listen port: `3000` (override with `PORT` in `.env`).
+- Copy `.env.example` to `.env`
+- Run `pnpm db:migrate` once.
+- Run `pnpm dev`. Default listen port: `8000` (override with `PORT` in `.env`).
 
 ## Docker
 
 - Build: `docker build -t fastify-drizzle-pg .`
-- Run with `DATABASE_URL`, `JWT_SECRET`, and `NODE_ENV` set; publish port `3000` unless you change `PORT`.
-- Run migrations against that database (e.g. CI or init job) before sending real traffic.
+- Run with `DATABASE_URL`, `JWT_SECRET`, and `NODE_ENV` set; publish port `8000` unless you change `PORT`.

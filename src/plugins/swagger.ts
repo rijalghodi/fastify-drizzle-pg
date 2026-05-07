@@ -34,10 +34,8 @@ export const swaggerPlugin = fp(async (fastify: FastifyInstance) => {
       },
     },
   });
-  const docsEnabled = env.nodeEnv !== "production";
-  if (docsEnabled) {
-    await fastify.register(fastifySwaggerUi, {
-      routePrefix: "/docs",
-    });
-  }
+
+  await fastify.register(fastifySwaggerUi, {
+    routePrefix: "/docs",
+  });
 });
